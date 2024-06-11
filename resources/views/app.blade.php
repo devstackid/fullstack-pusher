@@ -6,11 +6,16 @@
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+        {{-- icon --}}
+        <link rel="icon" href="{{ asset('images/logo.png') }}">
+
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+        
 
         <!-- Scripts -->
         @routes
