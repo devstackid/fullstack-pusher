@@ -26,32 +26,35 @@ const initialState: State = {
         email: "",
         email_verified_at: "",
         avatar: "",
+        active_status: false,
+        is_online: false,
+        last_seen: "",
     },
-    setTheme: () => {},
-    setAuth: () => {}
+    setTheme: () => { },
+    setAuth: () => { }
 }
 
 const reducer = (state: State, action: Action) => {
     switch (action.type) {
-        case 'SET_THEME' :
+        case 'SET_THEME':
             const theme = action.payload
             const html = document.documentElement
 
-            if(html) {
+            if (html) {
                 html.classList.remove('dark')
                 html.classList.remove('light')
             }
 
             switch (theme) {
                 case 'system':
-                    window.matchMedia('(prefers.color-scheme: dark)').matches 
+                    window.matchMedia('(prefers.color-scheme: dark)').matches
                         ? html.classList.add('dark')
                         : html.classList.add('light')
                     break;
                 case 'dark':
                     html.classList.add('dark')
                     break;
-                    case 'light':
+                case 'light':
                     html.classList.add('light')
             }
 
@@ -75,19 +78,19 @@ const AppContext = createContext(initialState)
 
 export const useAppContext = () => useContext(AppContext)
 
-export const AppProvider = ({children}: PropsWithChildren) => {
+export const AppProvider = ({ children }: PropsWithChildren) => {
     const props = usePage<PageProps>().props
     const [state, dispatch] = useReducer(reducer, initialState)
     const [isFirstLoading, setIsFirstLoading] = useState(true)
 
-    const setTheme = (value: string) => dispatch({type: 'SET_THEME', payload: value})
+    const setTheme = (value: string) => dispatch({ type: 'SET_THEME', payload: value })
 
-    const setAuth = (value: User) => dispatch({type: 'SET_AUTH', payload: value})
+    const setAuth = (value: User) => dispatch({ type: 'SET_AUTH', payload: value })
 
 
     useEffect(() => {
-      setAuth(props.auth)
-      setIsFirstLoading(false)
+        setAuth(props.auth)
+        setIsFirstLoading(false)
     }, []);
 
     const value = {
@@ -97,8 +100,8 @@ export const AppProvider = ({children}: PropsWithChildren) => {
         setTheme,
         setAuth
     };
-    
+
     return (<AppContext.Provider value={value}>{children}</AppContext.Provider>)
-    
+
 }
 

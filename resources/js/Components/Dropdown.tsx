@@ -87,7 +87,7 @@ const DropdownLink = ({ className = '', children, ...props }: InertiaLinkProps) 
         <Link
             {...props}
             className={
-                'block w-full rounded-md px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-secondary focus:outline-none focus:bg-secondary transition duration-150 ease-in-out ' +
+                'block w-full rounded-md px-4 py-2 text-start text-sm leading-5 text-foreground hover:bg-secondary focus:outline-none focus:bg-secondary transition duration-150 ease-in-out ' +
                 className
             }
         >
