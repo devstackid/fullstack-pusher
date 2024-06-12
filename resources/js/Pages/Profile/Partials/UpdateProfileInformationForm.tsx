@@ -10,7 +10,7 @@ import { BsCamera } from 'react-icons/bs';
 import { UpdateProfileSchema } from '@/types/user';
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }: { mustVerifyEmail: boolean, status?: string, className?: string }) {
-    const user = usePage<PageProps>().props.auth.user;
+    const user = usePage<PageProps>().props.auth;
 
     const avatarRef = useRef<HTMLImageElement>(null)
 

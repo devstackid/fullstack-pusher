@@ -2,12 +2,18 @@ import { type } from "os";
 import { Method } from "./method";
 
 export type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
     email_verified_at: string;
     avatar: string;
+    active_status: boolean,
+    is_online: boolean;
+    last_seen: string;
+
 }
+
+
 
 export type UpdateProfileSchema = {
     _method: Method;
