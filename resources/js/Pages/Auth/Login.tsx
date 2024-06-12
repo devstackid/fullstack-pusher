@@ -6,9 +6,11 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import FormAlert from '@/Components/FormAlert';
+import { LoginSchema } from '@/types/user';
 
 export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm<LoginSchema>({
         email: '',
         password: '',
         remember: false,
@@ -30,9 +32,9 @@ export default function Login({ status, canResetPassword }: { status?: string, c
         <GuestLayout>
             <Head title="Log in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
+            {status && <FormAlert message={status} />}
 
-            <form onSubmit={submit}>
+            <form onSubmit={submit} className='space-y-4'>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -66,30 +68,37 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="block mt-4">
+
+                <div className="flex items-center justify-between">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
                         />
-                        <span className="ms-2 text-sm text-gray-600">Remember me</span>
+                        <span className="ms-2 text-sm text-foreground">Remember me</span>
                     </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
+                {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="btn-link"
                         >
-                            Forgot your password?
+                            Lupa password?
                         </Link>
                     )}
+                </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                <div className="flex">
+                    
+
+                    <PrimaryButton className="w-full" disabled={processing}>
                         Log in
                     </PrimaryButton>
+                </div>
+                <div className="flex justify-center">
+                    <Link href={route('register')} className='btn-link'>
+                        Belum memiliki akun?
+                    </Link>
                 </div>
             </form>
         </GuestLayout>
