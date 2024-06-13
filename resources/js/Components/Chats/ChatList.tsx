@@ -33,7 +33,7 @@ export default function ChatList({ search, href, type, className }: ChatListProp
         .map((chat) => (
           <div key={chat.id} className='group relative flex items-center'>
             <Link href={route(href, chat.id)} as='button' onClick={() => handleMarkAsRead(chat)} className={clsx(
-              'relative flex w-full flex-1 items-center gap-3 rounded-lg text-left transition-all group-hover:bg-secondary'
+              'relative flex w-full flex-1 items-center gap-3 px-2 rounded-lg text-left transition-all group-hover:bg-secondary py-2' , route().current(href, chat.id) && 'bg-secondary',
             )}>
               {search.length === 0 && chat.created_at ? <>
                 <div className='relative shrink-0'>
@@ -44,7 +44,7 @@ export default function ChatList({ search, href, type, className }: ChatListProp
                 <div className='overflow-hidden'>
                   <h5 className='truncate font-medium'>{chat.name}</h5>
                   <div className='flex items-center text-sm text-secondary-foreground'>
-                    <p className={clsx('truncate', !chat.is_read && 'font-medium text-foreground')} dangerouslySetInnerHTML={{ __html: chat.body }} />
+                    <p className={clsx('truncate', !chat.is_read && 'font-medium text-foreground', route().current(href, chat.id) && '!text-foreground')} dangerouslySetInnerHTML={{ __html: chat.body }} />
                     <span className='mx-1'>.</span>
                     <span className='shrink-0'>{relativeTime(chat.created_at)}</span>
                   </div>
