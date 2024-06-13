@@ -16,7 +16,7 @@ export default function SidebarMini() {
   }
 
   return (
-    <div className='flex sm:p-2 order-2 sm:order-1 mt-auto flex-row justify-between bg-background sm:mt-0 sm:flex-col sm:items-center sm:justify-center'>
+    <div className='flex sm:p-2 order-2 sm:order-1 mt-auto flex-row justify-between bg-background sm:mt-0 sm:flex-col sm:items-center sm:justify-center text-foreground'>
         <Link href={route('chats.index')} className={clsx('relative flex flex-1 items-center justify-center rounded-lg p-3 transition-all hover:bg-secondary sm:flex-initial', route().current('chats.*') && 'bg-secondary')}>
             <BsChat className='h-6 w-6' />
             <BadgeNotification />

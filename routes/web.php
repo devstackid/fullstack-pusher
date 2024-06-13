@@ -19,6 +19,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/users/{id}' , [UsersController::class, 'update'])->name('users.update');
 
     Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
+    Route::post('/chats', [ChatController::class, 'store'])->name('chats.store');
+
+    Route::get('/chats/users', [ChatController::class, 'loadChats'])->name('chats.users');
+    
+    Route::get('/chats/{id}', [ChatController::class, 'show'])->name('chats.show');
+    Route::get('/chats/{id}/messages', [ChatController::class, 'loadMessages'])->name('chats.messages');
+
     Route::get('/contacts', [ChatController::class, 'index'])->name('contacts.index');
     Route::get('/archived_chats', [ChatController::class, 'index'])->name('archived_chats.index');
 });

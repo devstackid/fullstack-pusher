@@ -10,7 +10,8 @@ export type User = {
     active_status: boolean,
     is_online: boolean;
     last_seen: string;
-
+    created_at?: string;
+    updated_at?: string;
 }
 
 
