@@ -7,12 +7,16 @@ import EmojiPicker, { Theme } from 'emoji-picker-react'
 import React, { useRef, useState, KeyboardEvent, useEffect } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
+import { Preview } from './Content'
 
 type ChatFooterProps = {
-    scrollToBottom: () => void
+    scrollToBottom: () => void;
+    attachments: Preview[]
+    closeOnPreview: () => void
+    onSelectOrPreviewFiles: (files: FileList | null)=> void
 }
 
-export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
+export default function ChatFooter({scrollToBottom, attachments, closeOnPreview, onSelectOrPreviewFiles}: ChatFooterProps) {
 
     const {theme} = useAppContext();
 
@@ -31,7 +35,9 @@ export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
     }, [])
     
     
-    const onSelectFile = () => {};
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onSelectOrPreviewFiles(e.target.files)
+    };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         const onPressBackspace = e.key === "Backspace";
@@ -68,12 +74,13 @@ export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
         e.preventDefault()
         setProcessing(true)
 
-        if(message.length === 0 || processing){
+        if(message.length === 0 && attachments.length === 0 || processing){
             return;
         }
 
-        SaveMessage({user, message})
+        SaveMessage({user, message, attachments})
         .then((response) => {
+            closeOnPreview();
             setMessage('')
             setTextAreaHeight(48)
             textAreaRef.current?.focus()

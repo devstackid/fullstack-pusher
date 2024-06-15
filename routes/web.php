@@ -20,11 +20,21 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
     Route::post('/chats', [ChatController::class, 'store'])->name('chats.store');
+    Route::delete('/chats/{message_id}', [ChatController::class, 'destroy'])->name('chats.destroy');
+    Route::delete('/chats/{message_id}/file/{file_name}' , [ChatController::class, 'deleteSelectedFile'])->name('chats.delete_file');
 
+    
     Route::get('/chats/users', [ChatController::class, 'loadChats'])->name('chats.users');
     
     Route::get('/chats/{id}', [ChatController::class, 'show'])->name('chats.show');
+    Route::delete('/chats/{id}/delete', [ChatController::class, 'destroyAll'])->name('chats.destroy_all');
     Route::get('/chats/{id}/messages', [ChatController::class, 'loadMessages'])->name('chats.messages');
+
+    Route::post('/chats/{id}/read', [ChatController::class, 'markAsRead'])->name('chats.mark_as_read');
+    Route::post('/chats/{id}/unread', [ChatController::class, 'markAsUnread'])->name('chats.mark_as_unread');
+
+    Route::post('/chats/{id}/archive', [ChatController::class, 'archiveChat'])->name('chats.archive');
+    Route::post('/chats/{id}/unarchive', [ChatController::class, 'unarchiveChat'])->name('chats.unarchive');
 
     Route::get('/contacts', [ChatController::class, 'index'])->name('contacts.index');
     Route::get('/archived_chats', [ChatController::class, 'index'])->name('archived_chats.index');

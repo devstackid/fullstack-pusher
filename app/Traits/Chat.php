@@ -9,6 +9,9 @@ use Illuminate\Database\Query\JoinClause;
 
 trait Chat
 {
+
+    protected $validImageExtensions = ['jpg', 'jpeg', 'png',  'gif', 'heic', 'svg', 'bmp', 'webp'];
+
     public function chats()
     {
 
@@ -37,7 +40,10 @@ trait Chat
                 ->setPath(route('chats.users'));
         } else {
 
-            $latestMessage = ChatMessage::where('from_id', auth()->id())->orWhere('to_id', auth()->id())
+            $latestMessage = ChatMessage::where(function (Builder $query) {
+                $query->where('from_id', auth()->id())->orWhere('to_id', auth()->id());
+            })
+            ->deletedInIds()
                 ->selectRaw("
                         MAX(sort_id) as sort_id,
                         CASE
@@ -55,8 +61,15 @@ trait Chat
                                 ->orOn('chat_messages.to_id', 'lm.another_user_id');
                         });
                 })
-                ->where('chat_messages.from_id', auth()->id())
-                ->orWhere('chat_messages.to_id', auth()->id())
+                ->leftJoin('archive_chats as ac', function (JoinClause $join) {
+                    $join->on('ac.from_id', 'lm.another_user_id')
+                        ->where('ac.archived_by', auth()->id());
+                })
+                ->where(function (Builder $query) {
+                    $query->where('chat_messages.from_id', auth()->id())
+                    ->orWhere('chat_messages.to_id', auth()->id());
+                })
+                ->whereNull('ac.id')
                 ->select('chat_messages.*', 'lm.another_user_id')
                 ->orderByDesc('sort_id')
                 ->paginate(15)
@@ -64,17 +77,37 @@ trait Chat
 
 
             foreach ($chats as $key => $chat) {
+
+                $from = $chat->from_id === auth()->id() ? 'Anda ' : '';
+                $attahcment = '';
+                if(!$chat->body && $chat->attachments){
+                    $fileName = $chat->attachments->first()?->original_name;
+                    if(in_array(pathinfo($fileName, PATHINFO_EXTENSION), $this->validImageExtensions)){
+                        $attachment = '<div class="flex items-center gap-1">'. ChatMessage::SVG_IMAGE_ATTACHMENT . $from .' mengirim gambar</div>';
+                    } else {
+                        $attachment = '<div class="flex items-center gap-1">'. ChatMessage::SVG_FILE_ATTACHMENT . $from .' mengirim file</div>';
+                    }
+                }
+
                 $mapped = new \stdClass;
+
+                $seenInId = collect(json_decode($chat->seen_in_id));
+
                 $mapped->id = $chat->another_user->id;
                 $mapped->name = $chat->another_user->name . ($chat->another_user->id === auth()->id() ? ' (Anda)' : '');
                 $mapped->avatar = $chat->another_user->avatar;
                 $mapped->from_id = $chat->from_id;
-                $mapped->body = $chat->body;
-                $mapped->is_read = true;
-                $mapped->is_reply = false;
-                $mapped->is_online = true;
+                
+                $mapped->is_read = $seenInId->filter(fn ($item) => $item->id === auth()->id())->count() > 0;
+                $mapped->is_reply = $chat->another_user->id === $chat->from_id;
+                $mapped->is_online = $chat->another_user->is_online == true;
                 $mapped->chat_type = ChatMessage::CHAT_TYPE;
                 $mapped->created_at = $chat->created_at;
+
+
+                
+
+                $mapped->body = $chat->body ? \Str::limit(strip_tags($chat->body), 100) : $attachment;
 
                 $chats[$key] = $mapped;
             }
@@ -89,16 +122,10 @@ trait Chat
         $chats = ChatMessage::with([
             'from',
             'to',
-            'attachments'
+            'attachments' => fn($query) => $query->with('sent_by')->deletedInIds()
         ])
-            ->where(function (Builder $query) use ($id) {
-                $query->where('from_id', auth()->id())
-                    ->where('to_id', $id);
-            })
-            ->orWhere(function (Builder $query) use ($id) {
-                $query->where('from_id', $id)
-                    ->where('to_id', auth()->id());
-            })
+           ->forUserOrGroup($id)
+           ->deletedInIds()
             ->selectRaw(
                 '
             id,

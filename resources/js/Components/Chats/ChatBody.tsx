@@ -9,12 +9,13 @@ type ChatBodyProps = {
   chatContainerRef: React.RefObject<HTMLDivElement>,
   bottomRef: React.RefObject<HTMLDivElement>,
   scrollToBottom: () => void;
+  onDrop: boolean;
 }
 
-export default function ChatBody({chatContainerRef, bottomRef, scrollToBottom}: ChatBodyProps) {
+export default function ChatBody({chatContainerRef, bottomRef, scrollToBottom, onDrop}: ChatBodyProps) {
   const {auth} = useAppContext();
   const {user} = useChatMessageContext();
-  return (
+  return !onDrop && (
     <div className='relative max-h-[100vh_-_120px] flex-1 overflow-auto p-2 pt-8' ref={chatContainerRef}>
       <div className="flex flex-col items-center justify-center text-center">
         <div className="user-picture">

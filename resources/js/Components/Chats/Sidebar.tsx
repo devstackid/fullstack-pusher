@@ -3,6 +3,7 @@ import { FaUsers } from 'react-icons/fa'
 import ChatListSearch from '@/Components/Chats/ChatListSearch'
 import ChatList from '@/Components/Chats/ChatList'
 import { useChatContext } from '@/Contexts/chat-context'
+import clsx from 'clsx'
 
 export default function Sidebar() {
 
@@ -10,7 +11,7 @@ export default function Sidebar() {
   const [search, setSearch] = useState("")
 
   return (
-    <div className='flex flex-1 order-1 shrink-0 flex-col sm:order-2 sm:w-[320px] text-foreground gap-2 sm:flex-initial sm:border-l sm:border-secondary lg:w-[360px]'>
+    <div className={clsx('flex-1 order-1 shrink-0 flex-col sm:order-2 sm:flex sm:w-[320px] text-foreground gap-2 sm:flex-initial sm:border-l sm:border-secondary lg:w-[360px]', route().current("chats.show") ? 'hidden' : 'flex')}>
       <div className="flex items-center justify-between px-2 pt-2 sm:pb-0">
         <h3 className='text-2xl font-semibold'>Chats</h3>
         <button className='flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white'>

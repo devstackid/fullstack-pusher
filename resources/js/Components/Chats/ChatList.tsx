@@ -5,6 +5,8 @@ import clsx from 'clsx';
 import { relativeTime } from '@/Utils';
 import { useChatContext } from '@/Contexts/chat-context';
 import BadgeChatNotification from './BadgeChatNotification';
+import { markAsRead } from '@/Api/chats';
+import ChatListAction from './ChatListAction';
 
 type ChatListProps = {
   search: string;
@@ -18,7 +20,7 @@ export default function ChatList({ search, href, type, className }: ChatListProp
   const { chats } = useChatContext();
 
   const handleMarkAsRead = (chat: Chat) => {
-    // TODO: mark as read
+    !chat.is_read && markAsRead(chat)
   }
 
   if (chats.length === 0) return;
@@ -26,7 +28,7 @@ export default function ChatList({ search, href, type, className }: ChatListProp
   return (
     <div className={clsx('relative max-h-[calc(100vh_-_158px)] flex-1 overflow-y-auto px-2 pb-1 sm:max-h-max sm:pb-2', className)}>
       {chats.sort((a, b) => {
-        if (search.length === 0) return b.created_at.localeCompare(a.created_at)
+        if (search.length === 0) return b.created_at?.localeCompare(a.created_at)
 
         return a.name.localeCompare(b.name)
       })
@@ -61,11 +63,10 @@ export default function ChatList({ search, href, type, className }: ChatListProp
                   </div>
                 </>}
 
-                {!chat.is_read && <BadgeChatNotification />}
-
-
-
             </Link>
+                {chat.body && type === 'chats' && <ChatListAction chat={chat} />}
+
+                {!chat.is_read && <BadgeChatNotification />}
           </div>
         ))
       }
