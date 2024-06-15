@@ -5,6 +5,7 @@ import { BsFileEarmarkText } from 'react-icons/bs'
 import { formatFileSize } from '@/Utils'
 import moment from 'moment'
 import DeleteMessage from './DeleteMessage'
+import { useChatMessageContext } from '@/Contexts/chat-message-context'
 
 type ChatMessageAttachmentProps = {
     message: ChatMessage,
@@ -18,6 +19,7 @@ type ChatMessageAttachmentProps = {
 
 export default function ChatMessageAttachment({message, messageWithImages, messageWithFiles, dir = "ltr", className, gridClassName, deleteMessageClassName}: ChatMessageAttachmentProps) {
 
+    const {setSelectedMedia} = useChatMessageContext()
     const downloadFile = (attachment: Attachment) => {
         window.open(`${attachment.file_path}/${attachment.file_name}`);
     };
@@ -44,6 +46,7 @@ export default function ChatMessageAttachment({message, messageWithImages, messa
                             key={
                                 attachment.file_name
                             }
+                            
                         >
                             <img
                                 src={`${attachment.file_path}/${attachment.file_name}`}
@@ -51,6 +54,7 @@ export default function ChatMessageAttachment({message, messageWithImages, messa
                                     attachment.original_name
                                 }
                                 className="h-full w-full rounded-lg object-cover"
+                                onClick={() => setSelectedMedia(attachment)}
                             />
 
                             {message.attachments.length > 1 && <DeleteSelectedFileInChat message={message} attachment={attachment} /> }

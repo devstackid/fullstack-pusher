@@ -60,4 +60,15 @@ class User extends Authenticatable
             set: fn ($value) => (int) $value
         );
     }
+
+    public function chat_message_colors(){
+        return $this->hasMany(ChatMessageColor::class, 'from_id');
+    }
+
+    public function message_color(string $id){
+        return $this->chat_message_colors()
+            ->where('to_id', $id)
+            ->first()
+            ?->message_color ?? null;
+    }
 }

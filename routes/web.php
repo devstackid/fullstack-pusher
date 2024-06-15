@@ -29,12 +29,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/chats/{id}', [ChatController::class, 'show'])->name('chats.show');
     Route::delete('/chats/{id}/delete', [ChatController::class, 'destroyAll'])->name('chats.destroy_all');
     Route::get('/chats/{id}/messages', [ChatController::class, 'loadMessages'])->name('chats.messages');
+    
+    Route::get('/chats/{id}/media', [ChatController::class, 'loadMedia'])->name('chats.media');
+    Route::get('/chats/{id}/files', [ChatController::class, 'loadFiles'])->name('chats.files');
+    Route::get('/chats/{id}/links', [ChatController::class, 'loadLinks'])->name('chats.links');
 
+    
     Route::post('/chats/{id}/read', [ChatController::class, 'markAsRead'])->name('chats.mark_as_read');
     Route::post('/chats/{id}/unread', [ChatController::class, 'markAsUnread'])->name('chats.mark_as_unread');
 
     Route::post('/chats/{id}/archive', [ChatController::class, 'archiveChat'])->name('chats.archive');
     Route::post('/chats/{id}/unarchive', [ChatController::class, 'unarchiveChat'])->name('chats.unarchive');
+
+    Route::post('/chats/{id}/customize', [ChatController::class, 'customizeChat'])->name('chats.customize_chat');
 
     Route::get('/contacts', [ChatController::class, 'index'])->name('contacts.index');
     Route::get('/archived_chats', [ChatController::class, 'index'])->name('archived_chats.index');

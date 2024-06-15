@@ -5,6 +5,7 @@ import { BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useChatMessageContext } from '@/Contexts/chat-message-context';
 import { Link } from '@inertiajs/react';
 import { FaArrowLeft } from 'react-icons/fa';
+import clsx from 'clsx';
 
 type PreviewOnDropFileProps = {
     onDrop: boolean;
@@ -13,7 +14,7 @@ type PreviewOnDropFileProps = {
 
 export default function ChatHeader({onDrop, closeOnPreview}: PreviewOnDropFileProps) {
 
-    const {user, toggleSidebarRight} = useChatMessageContext();
+    const {user, toggleSidebarRight, showSidebarRight} = useChatMessageContext();
 
     return (
         <div className='flex h-14 items-center justify-between border-b border-secondary p-2 shadow-sm'>
@@ -39,7 +40,9 @@ export default function ChatHeader({onDrop, closeOnPreview}: PreviewOnDropFilePr
             {onDrop ? <button className='flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary' onClick={closeOnPreview}>
                 <BsXLg />
             </button> : <button onClick={toggleSidebarRight} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary">
+                {showSidebarRight ? <div className={clsx('rounded-full p-[1px] text-sm text-white', !user.message_color && 'bg-primary')} style={{ background: user.message_color }}>
                 <BsThreeDots />
+                </div> : <BsThreeDots />}
             </button>}
 
             

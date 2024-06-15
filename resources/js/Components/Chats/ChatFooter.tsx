@@ -8,6 +8,7 @@ import React, { useRef, useState, KeyboardEvent, useEffect } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
 import { Preview } from './Content'
+import { existingFiles, existingLinks, existingMedia } from '@/Utils'
 
 type ChatFooterProps = {
     scrollToBottom: () => void;
@@ -21,7 +22,7 @@ export default function ChatFooter({scrollToBottom, attachments, closeOnPreview,
     const {theme} = useAppContext();
 
     const {refetchChats} = useChatContext()
-    const {user, messages, setMessages} = useChatMessageContext()
+    const {user, messages, setMessages, reloadMedia, reloadFiles, reloadLinks} = useChatMessageContext()
 
     const [message, setMessage] = useState("")
     const [textAreaHeight, setTextAreaHeight] = useState(48)
@@ -90,6 +91,10 @@ export default function ChatFooter({scrollToBottom, attachments, closeOnPreview,
             const data = response.data.data
 
             setMessages([...messages, data]);
+
+            existingMedia(data.attachments) && reloadMedia(user)
+            existingFiles(data.attachments) && reloadFiles(user)
+            existingLinks(data.links) && reloadLinks(user)
 
 
             refetchChats();
