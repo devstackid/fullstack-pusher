@@ -82,7 +82,7 @@ export default function ChatList({ search, href, type, className }: ChatListProp
                 </>}
 
             </Link>
-                {chat.body && type === 'chats' && <ChatListAction chat={chat} />}
+                {chat.body && <ChatListAction chat={chat} />}
 
                 {!chat.is_read && <BadgeChatNotification />}
           </div>

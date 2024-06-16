@@ -1,11 +1,15 @@
 import Modal from "@/Components/Modal";
+import AddNewGroup from "@/Components/Modals/AddNewGroup";
 import CustomizeChat from "@/Components/Modals/CustomizeChat";
 import DeleteChatConfirmation from "@/Components/Modals/DeleteChatConfirmation";
 import DeleteMessageConfirmation from "@/Components/Modals/DeleteMessageConfirmation";
+import EditGroup from "@/Components/Modals/EditGroup";
+import ExitGroupConfirmation from "@/Components/Modals/ExitGroupConfirmation";
 import Preferences from "@/Components/Modals/Preferences";
 import { useContext, createContext, PropsWithChildren, useReducer } from "react";
 
-type ModalViews = "PREFERENCES" | "DELETE_MESSAGE_CONFIRMATION" | "DELETE_CHAT_CONFIRMATION" | "CUSTOMIZE_CHAT"
+type ModalViews = "PREFERENCES" | "DELETE_MESSAGE_CONFIRMATION" | "DELETE_CHAT_CONFIRMATION" | "CUSTOMIZE_CHAT" | "ADD_NEW_GROUP" | "EDIT_GROUP"
+  | "EXIT_GROUP_CONFIRMATION" | "EXIT_GROUP_CONFIRMATION"
 type ModalSize = "sm" | "md" | "lg" | "xl" | "2xl";
 
 type OpenModal<T = any> = {
@@ -113,6 +117,9 @@ export const ModalChildren = () => {
             {view === 'DELETE_MESSAGE_CONFIRMATION' && <DeleteMessageConfirmation />}
             {view === 'DELETE_CHAT_CONFIRMATION' && <DeleteChatConfirmation />}
             {view === 'CUSTOMIZE_CHAT' && <CustomizeChat />}
+            {view === 'ADD_NEW_GROUP' && <AddNewGroup />}
+            {view === "EDIT_GROUP" && <EditGroup />}
+      {view === "EXIT_GROUP_CONFIRMATION" && <ExitGroupConfirmation />}
         </Modal>
     )
 }

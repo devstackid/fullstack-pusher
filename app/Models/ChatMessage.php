@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,7 +53,7 @@ class ChatMessage extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('default_sort', function(EloquentBuilder $builder){
+        static::addGlobalScope('default_sort', function(Builder $builder){
             $builder->orderBy('sort_id');
         });
 
@@ -63,25 +63,37 @@ class ChatMessage extends Model
         });
     }
 
-    public function scopeForUserOrGroup(EloquentBuilder $query, string $id){
-        $query->where(function (EloquentBuilder $query) use ($id) {
-            $query->where('from_id', auth()->id())
-                ->where('to_id', $id);
-        })
-        ->orWhere(function (EloquentBuilder $query) use ($id) {
-            $query->where('from_id', $id)
-                ->where('to_id', auth()->id());
-        });
+    public function scopeForUserOrGroup(Builder $query, string $id) 
+    {
+        $group = GroupMember::where('member_id', auth()->id())
+            ->select('member_id', 'group_id')
+            ->groupBy('member_id', 'group_id');
+
+        $query->where(function (Builder $query) use ($id) {
+                $query->where('from_id', auth()->id())
+                      ->where('to_id', $id);
+            })
+            ->orWhere(function (Builder $query) use ($id) {
+                $query->where('from_id', $id)
+                      ->where('to_id', auth()->id());
+            })
+            ->orWhere(function (Builder $query) use ($id, $group) {
+                $query->where('to_type', ChatGroup::class)
+                      ->where('to_id', $id)
+                      ->whereIn('to_id', $group->pluck('group_id')?->toArray());
+            });
     }
 
-    public function scopeDeletedInIds(EloquentBuilder $query){
-        $query->where(function (EloquentBuilder $query){
+    public function scopeDeletedInIds(Builder $query) 
+    {
+        $query->where(function (Builder $query) {
             $query->whereNull('deleted_in_id')
-                ->orWhereRaw("JSON_SEARCH(deleted_in_id, 'ONE', ?, NULL, '$[*].id')", auth()->id());
+                  ->orWhereRaw("JSON_SEARCH(deleted_in_id, 'ONE', ?, NULL, '$[*].id') IS NULL", auth()->id());
         });
     }
 
-    public function scopeNotSeen(EloquentBuilder $query){
+    public function scopeNotSeen(Builder $query) 
+    {
         $query->whereRaw("JSON_SEARCH(seen_in_id, 'ONE', ?, NULL, '$[*].id') IS NULL", auth()->id());
     }
 

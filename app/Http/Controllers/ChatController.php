@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArchiveChat;
+use App\Models\ChatGroup;
 use App\Models\ChatMessage;
 use App\Models\ChatMessageColor;
 use App\Models\User;
@@ -28,25 +29,35 @@ class ChatController extends Controller
     {
         try {
             $user = User::find($id);
-            if (!$user) {
-                throw new \Exception('User not found');
+            $group = ChatGroup::find($id);
+
+            if (!$user && !$group) {
+                throw new \Exception('User or group not found');
             }
 
-            $user->chat_type = ChatMessage::CHAT_TYPE;
+            if ($user) {
+                $user->chat_type = ChatMessage::CHAT_TYPE;
+            } else if ($group) {
+                $user = $group;
+                $user->creator = $group->creator;
+                $user->chat_type = ChatMessage::CHAT_GROUP_TYPE;
+                $user->members_count = $group->group_members->count();
+            }
+
             $user->message_color = auth()->user()->message_color($id);
-
-
 
             return Inertia::render('chats/Show', [
                 'user' => fn () => $user,
                 'chats' => fn () => $this->chats(),
-                'messages' => fn () =>  $this->messages($id),
+                'messages' => fn () => $this->messages($id),
                 'media' => fn () => $this->media($id),
                 'files' => fn () => $this->files($id),
                 'links' => fn () => $this->links($id),
             ]);
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            return back()->with([
+                'error_msg' => $e->getMessage()
+            ]);
         }
     }
 
@@ -113,27 +124,25 @@ class ChatController extends Controller
 
             $attachments = [];
             if ($request->hasFile('attachments')) {
+                /**
+                 * @var \Illuminate\Http\UploadedFile $attachment
+                 */
                 foreach ($request->file('attachments') as $attachment) {
-                    /**
-                     * @var \Illuminate\Http\UploadedFile $attachment
-                     */
                     $extension = $attachment->getClientOriginalExtension();
                     $fileName = \Str::uuid() . '.' . $extension;
 
                     array_push($attachments, [
                         'original_name' => $attachment->getClientOriginalName(),
                         'file_name' => $fileName,
-                        'file_path' =>  '/storage/chats/' . auth()->id(),
-                        'file_size' =>  $attachment->getSize(),
-                        'file_type' =>  in_array($extension, $this->validImageExtensions) ? 'media' : 'files',
-                        'sent_by_id' =>  auth()->id(),
+                        'file_path' => '/storage/chats/' . auth()->id(),
+                        'file_size' => $attachment->getSize(),
+                        'file_type' => in_array($extension, $this->validImageExtensions) ? 'media' : 'files',
+                        'sent_by_id' => auth()->id()
                     ]);
 
-                    Storage::disk('public')->putFileAs('/chats/' . auth()->id(), $attachment, $fileName);
+                    Storage::disk('public')->putFileAs('/chats/'. auth()->id(), $attachment, $fileName);
                 }
             }
-
-
 
             /**
              * @var ChatMessage $chat
@@ -141,8 +150,8 @@ class ChatController extends Controller
             $chat = ChatMessage::create([
                 'from_id' => auth()->id(),
                 'to_id' => $request->to_id,
-                'to_type' => User::class,
-                'body' => $request->body
+                'to_type' => User::find($request->to_id) ? User::class : ChatGroup::class,
+                'body' => $request->body,
             ]);
 
             $chat->attachments()->createMany($attachments);
@@ -295,7 +304,7 @@ class ChatController extends Controller
         }
     }
 
-    public function archiveChat(string $id)
+    public function archiveChat(string $id) 
     {
         DB::beginTransaction();
         try {
@@ -304,12 +313,12 @@ class ChatController extends Controller
                 ->first();
 
             if (!$chat) {
-                throw new \Exception('Chat tidak ditemukan');
+                throw new \Exception('Chat not found');
             }
 
             ArchiveChat::create([
                 'from_id' => $id,
-                'from_type' => User::class,
+                'from_type' => User::find($id) ? User::class : ChatGroup::class,
                 'archived_by' => auth()->id()
             ]);
 
@@ -323,7 +332,7 @@ class ChatController extends Controller
         }
     }
 
-    public function unarchiveChat(string $id)
+    public function unarchiveChat(string $id) 
     {
         DB::beginTransaction();
         try {
@@ -332,7 +341,7 @@ class ChatController extends Controller
                 ->first();
 
             if (!$archivedChat) {
-                throw new \Exception('Arsip chat tidak ditemukan');
+                throw new \Exception('Archived chat not found');
             }
 
             $archivedChat->delete();
@@ -419,7 +428,7 @@ class ChatController extends Controller
     //     }
     // }
 
-    public function customizeChat(Request $request, string $id)
+    public function customizeChat(Request $request, string $id) 
     {
         DB::beginTransaction();
         try {
@@ -431,7 +440,7 @@ class ChatController extends Controller
                 ChatMessageColor::create([
                     'from_id' => auth()->id(),
                     'to_id' => $id,
-                    'to_type' => User::class,
+                    'to_type' => User::find($id) ? User::class : ChatGroup::class,
                     'message_color' => $request->message_color
                 ]);
             } else {

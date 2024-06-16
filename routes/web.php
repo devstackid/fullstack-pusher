@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsersController;
@@ -16,7 +17,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::patch('/users/{id}' , [UsersController::class, 'update'])->name('users.update');
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
+        Route::get('/', [UsersController::class, 'index'])->name('index');
+        Route::patch('/{id}', [UsersController::class, 'update'])->name('update');
+    });
 
     Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
     Route::post('/chats', [ChatController::class, 'store'])->name('chats.store');
@@ -42,6 +46,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/chats/{id}/unarchive', [ChatController::class, 'unarchiveChat'])->name('chats.unarchive');
 
     Route::post('/chats/{id}/customize', [ChatController::class, 'customizeChat'])->name('chats.customize_chat');
+
+    Route::group(['prefix' => 'group', 'as' => 'group.'], function () {
+        Route::post('/', [GroupController::class, 'store'])->name('store');
+        Route::get('/{id}', [GroupController::class, 'members'])->name('members');
+        Route::patch('/{id}', [GroupController::class, 'update'])->name('update');
+        Route::delete('/{id}', [GroupController::class, 'exit'])->name('exit');
+    });
 
     Route::get('/contacts', [ChatController::class, 'index'])->name('contacts.index');
     Route::get('/archived_chats', [ChatController::class, 'index'])->name('archived_chats.index');
