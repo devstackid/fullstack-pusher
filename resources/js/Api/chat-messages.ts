@@ -1,4 +1,4 @@
-import { Attachment, ChatMessage, ChatProfile, Link } from "@/types/chat-message"
+import { Attachment, ChatMessage, ChatMessagePaginate, ChatProfile, Link } from "@/types/chat-message"
 import { AxiosResponse } from "axios"
 
 export const SaveMessage = ({user, message, attachments}: {user: ChatProfile, message: string, attachments: File[]}) : Promise<AxiosResponse<{data: ChatMessage}>> => {
@@ -19,6 +19,10 @@ export const DeleteMessage = (message: ChatMessage): Promise<AxiosResponse<{data
 
 export const deleteFileInChat = (message: ChatMessage, attachment: Attachment): Promise<AxiosResponse<{data: null}>> => {
     return window.axios.delete(route('chats.delete_file', [message.id, attachment.file_name]))
+}
+
+export const fetchMessagesInPaginate = (url: string): Promise<AxiosResponse<{data: ChatMessagePaginate}>> => {
+    return window.axios.get(url)
 }
 
 export const fetchMedia = (user: ChatProfile): Promise<AxiosResponse<{data: Attachment[]}>> => {

@@ -55,6 +55,7 @@ class ChatController extends Controller
         try {
             $chats = $this->chats();
 
+
             return $this->ok($chats);
         } catch (\Exception $e) {
             return $this->oops($e->getMessage());

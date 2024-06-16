@@ -62,7 +62,7 @@ export default function PopupGallery() {
                         <div className='relative z-10 flex w-full items-center justify-between px-4 py-2'>
                             <div className="flex items-center gap-2">
                                 <div>
-                                    <img src={selectedMedia.sent_by.avatar} alt={selectedMedia.sent_by.name} className='h-10 w-10 rounded-full' />
+                                    <img src={selectedMedia.sent_by?.avatar} alt={selectedMedia.sent_by.name} className='h-10 w-10 rounded-full' />
                                 </div>
                                 <div className="leading-4">
                                     <h5 className="font-medium text-gray-50">

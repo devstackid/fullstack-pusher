@@ -14,10 +14,10 @@
     }
 
     .dark {
-        --background: 200 6% 10%;
+        --background: 200 6% 15%;
         --foreground: 210 40% 98%;
 
-        --secondary: 210 6% 13%;
+        --secondary: 210 6% 18%;
         --secondary-foreground: 210 6% 40%;
     }
 }

@@ -41,7 +41,7 @@ export default function ProfileInformation({
             leave="transition-transform duration-300 ease-out"
             leaveFrom="transform opacity-100 translate-x-0"
             leaveTo="transform opacity-0 translate-x-[-100%]"
-            className={clsx('flex-col gap-4 w-full lg:flex', showSidebarRight ? 'flex' : 'hidden')}
+            className={clsx('flex-col gap-4 w-full lg:flex text-foreground', showSidebarRight ? 'flex' : 'hidden')}
         >
             <div className="visible flex h-14 items-center border-b border-secondary bg-background px-2 lg:invisible">
                 <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary" onClick={toggleSidebarRight}>

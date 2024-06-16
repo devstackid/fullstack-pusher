@@ -33,7 +33,7 @@ export default function Attachment({
             leaveFrom="transform opacity-100 translate-x-0"
             leaveTo="transform opacity-0 -translate-x-[-100%]"
             className={clsx(
-                "absolute top-0 w-full flex-col lg:flex",
+                "absolute top-0 w-full flex-col lg:flex text-foreground",
                 showSidebarRight ? "flex" : "hidden",
             )}
         >
