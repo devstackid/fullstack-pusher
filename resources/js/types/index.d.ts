@@ -4,7 +4,7 @@ import { ChatPaginate } from './chat';
 import { Attachment, ChatMessagePaginate, ChatProfile, Link } from './chat-message';
 
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+export type PageProps<T extends Record<string, unknown> = Record<string, unknown> > = T & {
     auth: User;
     ziggy: Config & { location: string };
 };

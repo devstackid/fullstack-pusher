@@ -7,17 +7,22 @@ import EmojiPicker, { Theme } from 'emoji-picker-react'
 import React, { useRef, useState, KeyboardEvent, useEffect } from 'react'
 import { BiSend } from 'react-icons/bi'
 import { BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
+import { Preview } from './Content'
+import { existingFiles, existingLinks, existingMedia } from '@/Utils'
 
 type ChatFooterProps = {
-    scrollToBottom: () => void
+    scrollToBottom: () => void;
+    attachments: Preview[]
+    closeOnPreview: () => void
+    onSelectOrPreviewFiles: (files: FileList | null)=> void
 }
 
-export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
+export default function ChatFooter({scrollToBottom, attachments, closeOnPreview, onSelectOrPreviewFiles}: ChatFooterProps) {
 
     const {theme} = useAppContext();
 
     const {refetchChats} = useChatContext()
-    const {user, messages, setMessages} = useChatMessageContext()
+    const {user, messages, setMessages, reloadMedia, reloadFiles, reloadLinks} = useChatMessageContext()
 
     const [message, setMessage] = useState("")
     const [textAreaHeight, setTextAreaHeight] = useState(48)
@@ -31,7 +36,9 @@ export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
     }, [])
     
     
-    const onSelectFile = () => {};
+    const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onSelectOrPreviewFiles(e.target.files)
+    };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         const onPressBackspace = e.key === "Backspace";
@@ -68,12 +75,13 @@ export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
         e.preventDefault()
         setProcessing(true)
 
-        if(message.length === 0 || processing){
+        if(message.length === 0 && attachments.length === 0 || processing){
             return;
         }
 
-        SaveMessage({user, message})
+        SaveMessage({user, message, attachments})
         .then((response) => {
+            closeOnPreview();
             setMessage('')
             setTextAreaHeight(48)
             textAreaRef.current?.focus()
@@ -83,6 +91,10 @@ export default function ChatFooter({scrollToBottom}: ChatFooterProps) {
             const data = response.data.data
 
             setMessages([...messages, data]);
+
+            existingMedia(data.attachments) && reloadMedia(user)
+            existingFiles(data.attachments) && reloadFiles(user)
+            existingLinks(data.links) && reloadLinks(user)
 
 
             refetchChats();

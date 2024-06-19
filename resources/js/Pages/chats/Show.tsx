@@ -1,4 +1,5 @@
 import Content from '@/Components/Chats/Content'
+import PopupGallery from '@/Components/Chats/PopupGallery'
 import Sidebar from '@/Components/Chats/Sidebar'
 import SidebarRight from '@/Components/Chats/SidebarRight'
 import { ChatProvider } from '@/Contexts/chat-context'
@@ -16,6 +17,8 @@ export default function Show() {
                     <Sidebar />
                     <Content />
                     <SidebarRight />
+
+                    <PopupGallery />
                 </ModalProvider>
             </ChatMessageProvider>
         </ChatProvider>

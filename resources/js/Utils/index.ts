@@ -1,3 +1,4 @@
+import { Attachment, Link } from "@/types/chat-message";
 import moment from "moment";
 
 export const relativeTime = (time:string) =>{
@@ -23,4 +24,36 @@ export const relativeTime = (time:string) =>{
                 return match;
         }
     }).replace(' ago', "");
+}
+
+export const isImageLinkValid = (name: string | null): boolean => {
+    if(!name) return false;
+
+    const validExtensions = ['jpg', 'jpeg', 'png',  'gif', 'heic', 'svg', 'bmp', 'webp'];
+    const extension = name.split('.').pop()?.toLowerCase() ?? '';
+
+    return validExtensions.includes(extension);
+}
+
+export const formatFileSize = (size: number): string => {
+    if(size < 1024){
+        return size.toFixed(2) + " B";
+    }else if(size < 1024 * 1024){
+        return (size / 1024).toFixed(2) + " KB";
+    }else if(size < 1024 * 1024 * 1024){
+        return (size /(1024 * 1024)).toFixed(2) + " MB";
+    } else {
+        return (size / (1024 * 1024 * 1024)).toFixed(2) + " GB"
+    }
+}
+
+export const existingMedia = (attachments: Attachment[]) => {
+    return attachments.some((media) => isImageLinkValid(media.original_name))
+} 
+export const existingFiles = (attachments: Attachment[]) => {
+    return attachments.some((media) => !isImageLinkValid(media.original_name))
+} 
+
+export const existingLinks = (links: Link[]) => {
+    return links && links.length > 0;
 }

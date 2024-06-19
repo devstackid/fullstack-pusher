@@ -14,10 +14,10 @@
     }
 
     .dark {
-        --background: 200 6% 10%;
+        --background: 200 6% 15%;
         --foreground: 210 40% 98%;
 
-        --secondary: 210 6% 13%;
+        --secondary: 210 6% 18%;
         --secondary-foreground: 210 6% 40%;
     }
 }
@@ -68,3 +68,28 @@
         @apply rounded border border-gray-200 bg-background text-primary !outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/15 focus:ring-offset-2 focus:ring-offset-background dark:border-gray-500/25
     }
 }
+
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+  ::-webkit-scrollbar-button {
+    width: 0px;
+    height: 0px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #878787;
+    border: 0px dashed #c4c4c4;
+    border-radius: 0px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border: 0px double #ffffff;
+    border-radius: 0px;
+  }
+  
+  
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }

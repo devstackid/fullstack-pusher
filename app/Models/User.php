@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,5 +60,24 @@ class User extends Authenticatable
             get: fn ($value) => (bool) $value,
             set: fn ($value) => (int) $value
         );
+    }
+
+    public function chat_message_colors(){
+        return $this->hasMany(ChatMessageColor::class, 'from_id');
+    }
+
+    public function message_color(string $id){
+        return $this->chat_message_colors()
+            ->where('to_id', $id)
+            ->first()
+            ?->message_color ?? null;
+    }
+
+    public function scopeOnline(Builder $query){
+        $query->where('is_online', true);
+    }
+
+    public function scopeInactive(Builder $query){
+        $query->online()->where('last_seen', ',', now()->subSeconds(10));
     }
 }

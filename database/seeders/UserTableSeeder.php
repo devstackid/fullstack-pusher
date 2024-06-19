@@ -13,11 +13,11 @@ class UserTableSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(30)->create();
+        User::factory(4)->create();
 
         User::first()->update([
             'email' => 'first@gmail.com',
-            'name' => 'First User',
+            'name' => 'Penjual Nasgor',
         ]);
     }
 }

@@ -1,16 +1,29 @@
 import BadgeOnline from './BadgeOnline'
 import { CHAT_TYPE } from '@/types/chat';
 import moment from 'moment';
-import { BsThreeDots } from 'react-icons/bs';
+import { BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useChatMessageContext } from '@/Contexts/chat-message-context';
+import { Link } from '@inertiajs/react';
+import { FaArrowLeft } from 'react-icons/fa';
+import clsx from 'clsx';
 
-export default function ChatHeader() {
+type PreviewOnDropFileProps = {
+    onDrop: boolean;
+    closeOnPreview: () => void;
+}
 
-    const {user, toggleSidebarRight} = useChatMessageContext();
+export default function ChatHeader({onDrop, closeOnPreview}: PreviewOnDropFileProps) {
+
+    const {user, toggleSidebarRight, showSidebarRight} = useChatMessageContext();
 
     return (
         <div className='flex h-14 items-center justify-between border-b border-secondary p-2 shadow-sm'>
             <div className="flex items-center gap-2">
+
+                <Link href={route('chats.index')} className='flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary sm:hidden'>
+                    <FaArrowLeft />
+                </Link>
+
                 <div className="relative">
                     <img src={user.avatar} alt={user.name} className='h-10 w-10 rounded-full border border-secondary' />
                     {user.is_online && <BadgeOnline className='!right-0' />}
@@ -24,9 +37,15 @@ export default function ChatHeader() {
                 </div>
             </div>
 
-            <button onClick={toggleSidebarRight} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary">
+            {onDrop ? <button className='flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary' onClick={closeOnPreview}>
+                <BsXLg />
+            </button> : <button onClick={toggleSidebarRight} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary">
+                {showSidebarRight ? <div className={clsx('rounded-full p-[1px] text-sm text-white', !user.message_color && 'bg-primary')} style={{ background: user.message_color }}>
                 <BsThreeDots />
-            </button>
+                </div> : <BsThreeDots />}
+            </button>}
+
+            
         </div>
     )
 }
