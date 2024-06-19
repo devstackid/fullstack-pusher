@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Models\ChatMessage;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,14 +12,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SendMessage
+class SendMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(
+        public User $from,
+        public User $to,
+        public ChatMessage $chat
+    )
     {
         //
     }
@@ -30,7 +36,13 @@ class SendMessage
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new Channel("send-message-{$this->to->id}"),
+            new Channel("send-message-{$this->from->id}-to-{$this->to->id}")
         ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'send-message';
     }
 }

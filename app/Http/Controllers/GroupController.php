@@ -6,6 +6,7 @@ use App\Http\Requests\GroupRequest;
 use App\Models\ChatGroup;
 use App\Models\ChatMessage;
 use App\Models\GroupMember;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -44,12 +45,12 @@ class GroupController extends Controller
                 'body' => ' created group "'. $group->name .'"'
             ]);
 
-            // $from = auth()->user();
-            // $toMembers = User::whereIn('id', $request->group_members)->get();
+            $from = auth()->user();
+            $toMembers = User::whereIn('id', $request->group_members)->get();
 
-            // foreach ($toMembers as $to) {
-            //     event(new \App\Events\SendMessage($from, $to, $chat));
-            // }
+            foreach ($toMembers as $to) {
+                event(new \App\Events\SendMessage($from, $to, $chat));
+            }
     
             DB::commit();
 

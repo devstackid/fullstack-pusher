@@ -21,6 +21,10 @@ export const deleteFileInChat = (message: ChatMessage, attachment: Attachment): 
     return window.axios.delete(route('chats.delete_file', [message.id, attachment.file_name]))
 }
 
+export const fetchMessages = (user: ChatProfile): Promise<AxiosResponse<{data: ChatMessagePaginate}>> => {
+    return window.axios.get(route('chats.messages', user.id))
+}
+
 export const fetchMessagesInPaginate = (url: string): Promise<AxiosResponse<{data: ChatMessagePaginate}>> => {
     return window.axios.get(url)
 }

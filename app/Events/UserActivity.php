@@ -2,16 +2,17 @@
 
 namespace App\Events;
 
-use App\Models\ChatMessage;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SendGroupMessage implements ShouldBroadcast
+class UserActivity implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,8 +20,7 @@ class SendGroupMessage implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public string $toId,
-        public ChatMessage $chat
+        public $user
     )
     {
         //
@@ -34,12 +34,12 @@ class SendGroupMessage implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel("send-group-message-{$this->toId}"),
+            new Channel('user-activity'),
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'send-group-message';
+        return 'user-activity';
     }
 }

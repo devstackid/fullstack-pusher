@@ -167,6 +167,26 @@ class ChatController extends Controller
             $chat->attachments = $chat->attachments;
             $chat->links = $links;
 
+            $from = auth()->user();
+            if ($chat->to instanceof User) {
+                $to = User::find($request->to_id);
+
+                event(new \App\Events\SendMessage($from, $to, $chat));
+                
+            } else {
+                $memberIds = $chat->to->group_members()
+                    ->whereNot('member_id', auth()->id())
+                    ->pluck('member_id')
+                    ->toArray();
+                $toMembers = User::whereIn('id', $memberIds)->get();
+
+                foreach ($toMembers as $to) {
+                    event(new \App\Events\SendMessage($from, $to, $chat));
+                }
+
+                event(new \App\Events\SendGroupMessage($request->to_id, $chat));
+            }
+
             DB::commit();
             return $this->ok(data: $chat, code: 201);
         } catch (\Exception $e) {

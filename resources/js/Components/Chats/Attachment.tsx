@@ -5,11 +5,13 @@ import clsx from "clsx";
 import React, { Fragment } from "react";
 import { BsFileEarmarkText, BsLink45Deg } from "react-icons/bs";
 import { FaArrowLeft } from "react-icons/fa";
+import { Attachment } from "@/types/chat-message";
+
 type AttachmentProps = {
     toggleShowMedia: boolean;
     setToggleShowMedia: (value: boolean) => void;
 };
-export default function Attachment({
+export default function Attachments({
     toggleShowMedia,
     setToggleShowMedia,
 }: AttachmentProps) {

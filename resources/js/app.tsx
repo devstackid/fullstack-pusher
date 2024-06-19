@@ -2,6 +2,7 @@ import './bootstrap';
 import '../css/app.css';
 import '../css/emoji.css';
 import '../css/image-gallery.css';
+import './echo';
 
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
